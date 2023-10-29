@@ -6,7 +6,7 @@ from pathlib import Path
 import ultralytics
 
 
-class Board():
+class Chessboard():
     
     # initialize with the emty board image during calibration
     # Input -> Image , Weights
@@ -34,7 +34,7 @@ class Board():
             
             
         # Not 4 corners raise message to adjust camera and re-caliberate
-        
+        pass
         
 
     

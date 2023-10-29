@@ -1,4 +1,4 @@
-from Board import Board
+from Chessboard import Chessboard
 import cv2
 from pathlib import Path
 
@@ -12,9 +12,9 @@ def run():
         img = cv2.imread(str(images))
         
         if img is not None:
-            board = Board(src_img=img)            
+            chessboard = Chessboard(src_img=img)            
             ####board.detect_corners()
-            board.detect_tiles()
+            chessboard.detect_tiles()
             
         else:
             print(f"Error Loading image{img_path}")
