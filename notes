@@ -1,0 +1,38 @@
+Board : 
+=> Img ===>Co-ordinates where pieces exist
+- Identify the squares on the board
+	
+	-Convert image to grayscale 
+	=> Img ===> gray_img
+	
+	-Use Auto Canny to get the edges 
+	=> gray_img ===> edges
+	
+	-Sharpen the edges 
+	=>edges ===>sharpened_edges
+	
+	-Dilate the edges sharpened_edges
+	=>sharpened_edges ===>dilated_edges
+
+	-Use LSD to get the all set of lines 
+	=>dilated_edges ===>Lines
+
+	-Eliminate the lines that do not meet certain length threshold
+	=>Lines ===>Main_Lines
+
+	-Find Sets of Parallel lines
+	=>Main_Lines ===> Parallel lines			
+
+### Assumptions
+	- Need Calibration image as base line for board detector
+	- Angle of the camera does not change
+
+### To Do
+Create Board Class
+	Board.localize_board(): Localize board and return coordinates
+		Input->  Src image
+		Output-> Returns all coordinate points of the board (all intersection points of the squares on a chessboard )
+	Board.find_key_points(): Finds all the points that make up squaress on the board
+		Input-> Src image
+		Output-> key points on the board
+		Approach 
