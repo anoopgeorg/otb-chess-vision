@@ -18,7 +18,7 @@ def main(image):
     global src
     
     # src = cv.imread(cv.samples.findFile(image))
-    src = cv.imread(cv.samples.findFile("C:/Users/ANOOP/Desktop/Python/ai-porfolio/otb-chess-vision/src/ChessBoard/img_tests/test_board.jpg"))
+    src = cv.imread(cv.samples.findFile("C:/Users/ANOOP/Desktop/Python/ai-porfolio/otb-chess-vision/src/ChessBoard/img_tests/0 (2).jpg"))
     if src is None:
         print('Could not open or find the image: ', image)
         exit(0)

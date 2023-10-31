@@ -88,4 +88,5 @@ target/
 # Mypy cache
 .mypy_cache/
 
-src\ChessBoard\img_tests
+# Test images
+src/ChessBoard/img_tests/
