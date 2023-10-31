@@ -12,14 +12,14 @@ def run():
     for images in test_images: 
         img = cv2.imread(str(images))
         
-        
+         
         
         if img is not None:
             chessboard = Chessboard(src_img=img)            
             ####board.detect_corners()
             chessboard.detect_tiles()
             ##chessboard.detect_corners()
-            
+
             
             #chessboard.detect_good_features()
             # chessboard.calibrate_board(img)

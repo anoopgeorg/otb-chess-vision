@@ -338,7 +338,7 @@ class Chessboard():
         # thresh_inv = cv2.adaptiveThreshold(res_img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,101,25)
         # self.show_board("thershold_img",thresh_img)          
 
-        
+         
         # Find the contours for the threshold image 
         thresh_contours = self.find_shapes(thresh_img)
         # thresh_inv_contours = self.find_shapes(thresh_inv)
