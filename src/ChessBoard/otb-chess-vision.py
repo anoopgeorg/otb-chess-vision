@@ -19,7 +19,7 @@ cap.set(10,150)
 while cap.isOpened():
     sucess,img = cap.read()
     if sucess:
-        
+        chessboard = Chessboard(src_img=img)
         # img = thresh_img = cv2.adaptiveThreshold(chessboard.GRAY_IMG,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,101,25)
         cv2.imshow("Press Space once the black tiles are recognized",img)
         key = cv2.waitKey(1) & 0xFF
@@ -27,8 +27,8 @@ while cap.isOpened():
             break
         if key == 13 : # Check For "Enter"
             print("Claibration started=================================================================== >>>>>>>>>>>>>>>>>>")
-            chessboard = Chessboard(src_img=img)
-            cliberation_img = chessboard.detect_tiles()    
+            
+            cliberation_img,sorted_contours = chessboard.detect_tiles(chessboard.SRC_IMG)    
             ## TODO
             # ->Use the calibrated img to find the diagonal of the board
             # ->Use the diagonal to extrpolate the remaining two corner
