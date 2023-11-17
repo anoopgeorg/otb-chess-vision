@@ -1,4 +1,4 @@
-from Chessboard import Chessboard
+from chessBoard import chessBoard
 import cv2
 from pathlib import Path
 
@@ -18,11 +18,14 @@ def run():
         img = cv2.imread(str(images))
 
         if img is not None:
-            chessboard = Chessboard(src_img=img)
+            chessboard = chessBoard(img)
             ####board.detect_corners()
             # img,sorted_contours = chessboard.detect_tiles(chessboard.SRC_IMG)
 
-            chessboard.findBoardReference()
+            board, _ = chessboard.calibrateBoard(img)
+            location = chessboard.boardSearch([173, 128], board)
+            if location is not None:
+                print(location)
             ##chessboard.detect_corners()
 
             # chessboard.detect_good_features()
