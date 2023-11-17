@@ -1,8 +1,9 @@
+import cv2
+import numpy as np
+
 from chessBoard import chessBoard
 from pieceDetector import pieceDetector
 import utils
-import cv2
-import numpy as np
 
 
 class chessVision:
@@ -45,7 +46,6 @@ class chessVision:
             # Get the board representation
             pieces = np.array(pieces)
             self.chessBoard.getBoardRepresentation(pieces)
-
             return img
 
     def streamCapture(self):
@@ -65,7 +65,6 @@ class chessVision:
             sucess, src_img = cap.read()
             if sucess:
                 img = cv2.resize(src_img, (640, 640))
-                # cv2.imshow(window_msg, img)
                 if self.BOARD_COORD is None:
                     (tiles_img, _, _) = self.calibration(img)
                     cv2.imshow(window_msg, tiles_img)
@@ -75,9 +74,7 @@ class chessVision:
                 if key == ord("q"):
                     break
                 if key == 13:  # Check For "Enter"
-                    print(
-                        "Claibration started=================================================================== >>>>>>>>>>>>>>>>>>"
-                    )
+                    print("Claibration started:")
                     (tiles_img, board_coord, board) = self.calibration(img)
                     if tiles_img is not None:
                         window_msg = (

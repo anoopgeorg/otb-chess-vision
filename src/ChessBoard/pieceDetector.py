@@ -1,6 +1,5 @@
 from ultralytics import YOLO
 from pathlib import Path
-import cv2
 import numpy as np
 
 
@@ -21,7 +20,6 @@ class pieceDetector:
             "white-queen": "Q",
             "white-rook": "R",
         }
-        print(self.PATH)
         self.model = self.loadModel(self.PATH)
         if self.model is not None:
             self.class_names = self.model.names
@@ -90,12 +88,3 @@ class pieceDetector:
         else:
             print("No piece detected!")
             return None
-
-
-if __name__ == "__main__":
-    p = pieceDetector()
-    img_path = Path().cwd() / "src/ChessBoard/image.jpg"
-    print(img_path)
-    img = cv2.imread(img_path)
-    img = cv2.resize(img, (640, 640))
-    p.getPrediction(img)
