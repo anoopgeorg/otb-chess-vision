@@ -166,10 +166,8 @@ class chessBoard:
         sorted_points = points[dist_to_centroid.argsort()][:n_contours]
 
         # Extract the location all tiles
-        ### BOC- Useful to debug issues in tile detection
-        # contour_mask = self.getContourMask(sorted_points)
-        # self.show_board("Contour Mask sorted", contour_mask)
-        ### EOC- Useful to debug issues in tile detection
+        contour_mask = self.getContourMask(sorted_points)
+        self.show_board("Contour Mask sorted", contour_mask)
         # Image morphings for easier recognition of basic image features
         element = cv2.getStructuringElement(1, (5, 5), (3, 3))
         contour_mask = cv2.dilate(contour_mask, element)
