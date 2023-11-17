@@ -19,9 +19,8 @@ class chessVision:
         self.chessBoard = chessBoard(frame)
         # row 0 -> H file,..., 7 -> A file
         board_coord, board = self.chessBoard.calibrateBoard(frame)
-        img = self.chessBoard.displayNumberedTiles(board_coord)
         self.BOARD_COORD = board_coord
-        return (img, board_coord, board)
+        return (board_coord, board)
 
     # Detect the state of the board
     # Input -> Image Frame
@@ -60,27 +59,31 @@ class chessVision:
         if not cap.isOpened():
             print("Error opening video stream or file")
 
-        window_msg = "Press Space once the black tiles are recognized"
+        window_msg = "Press 'Enter' to caliberate board"
         while cap.isOpened():
             sucess, src_img = cap.read()
             if sucess:
                 img = cv2.resize(src_img, (640, 640))
                 if self.BOARD_COORD is None:
-                    (tiles_img, _, _) = self.calibration(img)
-                    cv2.imshow(window_msg, tiles_img)
-                else:
+                    # Show camera feed
                     cv2.imshow(window_msg, img)
+                else:
+                    # Overlay numbered tiles on camera feed
+                    numbered_img = self.chessBoard.displayNumberedTiles(
+                        self.BOARD_COORD, img
+                    )
+                    cv2.imshow(window_msg, numbered_img)
+
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord("q"):
                     break
                 if key == 13:  # Check For "Enter"
                     print("Claibration started:")
-                    (tiles_img, board_coord, board) = self.calibration(img)
-                    if tiles_img is not None:
+                    (board_coords, board) = self.calibration(img)
+                    if board_coords is not None:
                         window_msg = (
-                            "Now set the pieces, then press 'p' to get prediction"
+                            "Press 'p' for prediction,'Enter' for recalibration "
                         )
-                        cv2.imshow("Detected tiles, press enter to confirm", tiles_img)
 
                 if key == ord("p"):
                     points_img = self.detectState(img)

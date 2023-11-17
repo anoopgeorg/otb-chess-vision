@@ -211,6 +211,7 @@ class chessBoard:
     # Calibration is done with A1 to the right of the camera
     # Coordinates are saved for refrence throughout the game
     def calibrateBoard(self, img):
+        src_img = img.copy()
         # Get the contours of the board and detect the tiles
         img, contours = self.detect_tiles(img)
         if contours is not None and len(contours) == 64:
@@ -227,8 +228,8 @@ class chessBoard:
             # board coordinates
             # row 0 -> H file,..., 7 -> A file
             board = np.array(sorted_coords, dtype="int").reshape(8, 8, 2)
-            img_numbered = self.displayNumberedTiles(board)
-            self.show_board("numbered tiles", img_numbered)
+            # img_numbered = self.displayNumberedTiles(board, src_img)
+            # self.show_board("numbered tiles", img_numbered)
             return board, chess.Board().clear_board()
 
         else:
@@ -237,15 +238,14 @@ class chessBoard:
             return None, None
 
     # Displays numbered tiles for given coordinates
-    def displayNumberedTiles(self, board):
-        img_c = self.SRC_IMG.copy()
+    def displayNumberedTiles(self, board, src_img=None):
         # Go through each file
         if board is not None:
             for f in board:
                 # Print each tile in the file
                 for i, tile in enumerate(f):
                     cv2.putText(
-                        img_c,
+                        src_img,
                         str(i),
                         tile,
                         cv2.FONT_HERSHEY_SIMPLEX,
@@ -253,7 +253,7 @@ class chessBoard:
                         (255, 255, 255),
                         1,
                     )
-        return img_c
+        return src_img
 
     # Search the board for the tile closest to the piece center
     def boardSearch(self, piece_center, board_coords, file_win=[0, 7], rank_win=[0, 7]):
