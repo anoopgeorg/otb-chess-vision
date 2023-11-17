@@ -8,6 +8,7 @@ def euclidieanDist(p1, p2):
     return np.sqrt(np.dot(temp, temp.T))
 
 
+# Plot the points onto an image
 def draw_points(img: np.array, points: np.array):
     print(f"draw_points{points}")
     if points is not None:
