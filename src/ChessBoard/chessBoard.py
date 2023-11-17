@@ -7,18 +7,40 @@ import utils
 
 class chessBoard:
     def __init__(self, src_img):
+        """
+        Initialize the chessboard class with the source image.
+
+        Args:
+        - src_img: Source image of the chessboard.
+        """
         self.SRC_IMG = cv2.resize(src_img, (640, 640))
         self.H = self.SRC_IMG.shape[0]
         self.W = self.SRC_IMG.shape[1]
         self.GRAY_IMG = cv2.cvtColor(self.SRC_IMG, cv2.COLOR_BGR2GRAY)
 
     def show_board(self, title, img, debug=False):
+        """
+        Debug board image display.
+
+        Args:
+        - title: Title of the window.
+        - img: Image to display.
+        - debug: Boolean to control debugging display.
+        """
         if debug == True:
             cv2.imshow(title, img)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
 
     def auto_canny(self, img, sigma=0.35):
+        """
+        Returns the canny edge output of the image by automatically calculating
+        the canny edge parameters.
+
+        Args:
+        - img: Source image.
+        - sigma: percentage(float) used for lower and upper bound calculation.
+        """
         median = np.median(img)
         lower_bound = int(max(0, (1.0 - sigma) * median))
         upper_bound = int(max(0, (1.0 + sigma) * median))
@@ -26,21 +48,15 @@ class chessBoard:
         self.show_board("Canny Edge", img_edges)
         return img_edges
 
-    def draw_points(self, img: np.array, points: np.array):
-        if points is not None:
-            for point in points:
-                x = point[0]
-                y = point[1]
-                plotted_img = cv2.circle(
-                    img, (x, y), radius=2, color=(255, 0, 0), thickness=1
-                )
-
-            self.show_board("poi_img", plotted_img)
-
-    # Get the shapes in a given threshold image
-    # Input -> Threshold image
-    # Output-> list of  [x1,y1,x2,y2,area]
     def find_shapes(self, threshold_mat):
+        """
+        Returns the shapes/contours found in an image based on hierarchy.
+        Args:
+        - threshold_mat: A binary image (ideally canny edge).
+        Returns:
+        - [[x1, y1, x2, y2, w, h, area]]
+        """
+
         contours, hierarchy = cv2.findContours(
             threshold_mat, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
         )
@@ -78,6 +94,13 @@ class chessBoard:
 
     # Returns a mask based on contours
     def getContourMask(self, contour_properties):
+        """
+        Returns the contour mask for a given set of contours.
+        Args:
+        - contour_properties:list of contours.
+        Returns:
+        - Binary mask
+        """
         # Generate a contour mask for getting avg pixel values in the contour region
         mask = np.zeros_like(self.GRAY_IMG)
         for contour in contour_properties:
@@ -97,6 +120,11 @@ class chessBoard:
     def resolve_contours(
         self, contour_properties, img=np.full((640, 640, 3), (0, 0, 0))
     ):
+        """
+        Returns a resolved list of contours filtered on area.
+        Args:
+        - contour_properties: array with contour properties.
+        """
         # find lower and upper range values
         areas = contour_properties[:, -1]
         median = np.median(areas)
@@ -118,7 +146,14 @@ class chessBoard:
 
         return ret_contours
 
-    def draw_tiles(self, contours, img, n_contours=64):
+    def resolveTiles(self, contours, img, n_contours=64):
+        """
+        Returns an image and resolved list of tiles that correspond to the board
+        Args:
+        - contours: array with contour properties.
+        - img : source image for overlay of drawn tiles.
+        - n_contours : Number of contours required.
+        """
         contour_properties = self.resolve_contours(contours, img)
         # Centroid of all the contour points should ideally be the middle of the chessboard
         t_left = np.array([contour_properties[:, 0], contour_properties[:, 1]])  # x1,y1
@@ -187,7 +222,16 @@ class chessBoard:
         ret_img = cv2.addWeighted(img, aplha, self.SRC_IMG.copy(), 1 - aplha, 0)
         return ret_img, sorted_points
 
-    def detect_tiles(self, img):
+    def detectTiles(self, img):
+        """
+        Returns an image with detected tiles and list of tiles
+        Args:
+        - img : source image for overlay of detected tiles.
+
+        Returns:
+        - Image overlayed with detected tiles
+        - List of resolved tiles
+        """
         image = self.GRAY_IMG.copy()
         self.show_board("NA - Image OG", image)
 
@@ -203,17 +247,25 @@ class chessBoard:
         # Find the contours
         thresh_contours = self.find_shapes(image)
         return_img = self.SRC_IMG.copy()
-        return_img, sorted_contours = self.draw_tiles(thresh_contours, return_img)
+        return_img, sorted_contours = self.resolveTiles(thresh_contours, return_img)
         self.show_board("final_detection", return_img)
         return return_img, sorted_contours
 
-    # Calibrates the empty board before the game starts
-    # Calibration is done with A1 to the right of the camera
-    # Coordinates are saved for refrence throughout the game
     def calibrateBoard(self, img):
+        """
+        Calibrates the initial board and tile cordinates that will be
+        referenced throughout the game. Calibration is done with the \
+        assumption that A1 is to the right of the camera.
+        Args:
+        - img : source image for calibration of tiles.
+
+        Returns:
+        - Board co-ordinates
+        - Board object of python-chess
+        """
         src_img = img.copy()
         # Get the contours of the board and detect the tiles
-        img, contours = self.detect_tiles(img)
+        img, contours = self.detectTiles(img)
         if contours is not None and len(contours) == 64:
             print("Board Found!")
             # Find the centroids of the tiles and sort based on Y-axis
@@ -239,6 +291,15 @@ class chessBoard:
 
     # Displays numbered tiles for given coordinates
     def displayNumberedTiles(self, board, src_img=None):
+        """
+        Displays numbered tiles over an image
+        Args:
+        - board : array of tile coordinates
+        - src_img : source image for overlay.
+
+        Returns:
+        - Image with numbered tiles
+        """
         # Go through each file
         if board is not None:
             for f in board:
@@ -257,6 +318,18 @@ class chessBoard:
 
     # Search the board for the tile closest to the piece center
     def boardSearch(self, piece_center, board_coords, file_win=[0, 7], rank_win=[0, 7]):
+        """
+        Two-way binary search over file and ranks of the chessboard to find
+        the square belonging to the piece
+        Args:
+        - piece_center : center coordinates.
+        - board_coords : Board coordinates.
+        - file_win : File window (row slice)
+        - rank_win : Rank windoe (column slice)
+
+        Returns:
+        - Index of the square
+        """
         testing = self.SRC_IMG.copy()
         if (file_win[0] == file_win[1]) and (rank_win[0] == rank_win[1]):
             return [file_win[0], rank_win[1]]
@@ -311,16 +384,24 @@ class chessBoard:
             testing, (int(piece_center[0]), int(piece_center[1])), 4, (255, 255, 255), 1
         )
         # Plot the square centers in given section
+        ###BOC- Useful for debuging search
+        # for row in center_section:
+        #     for square in row:
+        #         cv2.circle(testing, (int(square[0]), int(square[1])), 2, (255, 0, 0), 1)
 
-        for row in center_section:
-            for square in row:
-                cv2.circle(testing, (int(square[0]), int(square[1])), 2, (255, 0, 0), 1)
-
-        self.show_board("Centeroid and center section", testing)
-
+        # self.show_board("Centeroid and center section", testing)
+        ###EOC- Useful for debuging search
         return self.boardSearch(piece_center, board_coords, new_file_win, new_rank_win)
 
     def getBoardRepresentation(self, pieces):
+        """
+        Returns the board representation of the current game state
+        Args:
+        - pieces : list of piece class and square index
+
+        Returns:
+        - Board object with current state
+        """
         # Get an empty board
         board = np.full((8, 8), ".")
 
@@ -331,9 +412,9 @@ class chessBoard:
             col = int(piece_details[2])
             board[row, col] = piece
 
-        ####print(board)
         board = np.rot90(board, -1)  # Reorient the board before display
         fen = ""
+        # Get the FEN string for current board state
         for row in board:
             square_count = 0
             r = ""
@@ -356,3 +437,4 @@ class chessBoard:
         fen = fen.rstrip("/")
         board = chess.Board(fen)
         print(board)
+        return board

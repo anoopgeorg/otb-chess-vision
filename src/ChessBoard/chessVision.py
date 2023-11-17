@@ -8,6 +8,9 @@ import utils
 
 class chessVision:
     def __init__(self):
+        """
+        Initialize the chessVision class.
+        """
         self.pieceDetector = pieceDetector()
         self.BOARD_COORD = None
 
@@ -15,6 +18,13 @@ class chessVision:
     # Input -> Image Frame
     # Output -> Img,board_coordinates,board_object
     def calibration(self, frame):
+        """
+        Calibrate the chessboard.
+        The A1 square has to be oriented to the right of the camera
+
+        Args:
+        - frame: input image.
+        """
         print(f"FRAME -> SHAPE{frame.shape}")
         self.chessBoard = chessBoard(frame)
         # row 0 -> H file,..., 7 -> A file
@@ -22,10 +32,15 @@ class chessVision:
         self.BOARD_COORD = board_coord
         return (board_coord, board)
 
-    # Detect the state of the board
-    # Input -> Image Frame
-    # Output -> Board object
     def detectState(self, frame):
+        """
+        Returns the current board state.
+
+        Args:
+        - frame: input image.
+        Returns:
+        - Board object with current state
+        """
         if self.BOARD_COORD is not None and self.pieceDetector is not None:
             results = self.pieceDetector.getPieceLocation(frame)
             for result in results:
@@ -48,6 +63,10 @@ class chessVision:
             return img
 
     def streamCapture(self):
+        """
+        Open webcam stream for game state detection.
+
+        """
         frameWidth = 640
         frameHeight = 640
         link = "http://192.168.0.110:4747/video"
