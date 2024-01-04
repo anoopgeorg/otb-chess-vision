@@ -80,7 +80,9 @@ class chessVision:
         if not cap.isOpened():
             print("Error opening video stream or file")
 
-        window_msg = "Press 'Enter' to caliberate board"
+        window_msg = "Press 'Enter' to calibrate board"
+        window_msg = "Raw Video Feed"
+        print(">>>>>> Press 'Enter' to calibrate board, 'q' to quit the script")
         while cap.isOpened():
             success, src_img = cap.read()
             if success:
@@ -93,23 +95,30 @@ class chessVision:
                     numbered_img = self.chessBoard.displayNumberedTiles(
                         self.BOARD_COORD, img
                     )
+
                     cv2.imshow(window_msg, numbered_img)
 
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord("q"):
                     break
                 if key == 13:  # Check For "Enter"
-                    print("Claibration started:")
+                    print("Calibration started:")
                     (board_coords, board) = self.calibration(img)
                     if board_coords is not None:
+                        cv2.destroyAllWindows()
                         window_msg = (
                             "Press 'p' for prediction,'Enter' for recalibration "
                         )
+                        print(
+                            ">>>>>> Press 'p' for prediction,'Enter' for recalibration "
+                        )
 
                 if key == ord("p"):
+                    print(">>>>>> Piece detection has started")
                     points_img = self.detectState(img)
-                    if points_img is not None:
-                        cv2.imshow("Detected pieces", points_img)
+                    print(">>>>>> Pieces detected")
+                    # if points_img is not None:
+                    # cv2.imshow("Detected pieces", points_img)
 
             else:
                 print("Some issue with camera")
