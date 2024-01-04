@@ -1,7 +1,5 @@
 # otb-chess-vision
-
 A computer vision project to detect state of an over the board chess game and encode it in FEN notation.This is a simple implementation of YOLO for the chess piece detection and computer vision techniques to detect the square occupied by the pieces.
-=======
 
 ## Overview:
 ------------
@@ -20,9 +18,11 @@ This project approaches the problem in 3 parts:
     - Once the tiles and pieces are detected, the coordinates are used to identify which squares are occupied by the pieces. 
     - The game state is then converted to FEN notation, and the board is represented with the help of python-chess, which in future can be used for SVG rendering of the game state, provide move validation and a ton of other features.
 
+## Demo:
+![](https://github.com/anoopgeorg/otb-chess-vision/blob/8eab6e9a10f8ea1bc210fd6989a7f383f81fb5e1/demo/otb-chess-vision-demo.gif)
+
 ## TODOs:
 
 - Better tile detection that does not need calibration and is not sensitive to occlusion by chess pieces.
 - Improve piece detection model with more data and training.
 - Implement a SVG server to display the board state.
-=======
