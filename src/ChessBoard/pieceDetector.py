@@ -8,7 +8,9 @@ class pieceDetector:
         """
         Initialize the pieceDetector object and detection model.
         """
-        self.PATH = Path("..") / "src/models/chess-piece-detector.pt"
+        # self.PATH = Path("..") / "src/models/chess-piece-detector.pt"
+        parent = Path().resolve().parent
+        self.PATH = Path(parent / "models/chess-piece-detector.pt")
         self.FEN_PIECE = {
             "black-bishop": "b",
             "black-king": "k",

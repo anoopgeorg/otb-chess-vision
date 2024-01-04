@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import argparse
 
 from chessBoard import chessBoard
 from pieceDetector import pieceDetector
@@ -7,14 +8,15 @@ import utils
 
 
 class chessVision:
-    def __init__(self):
+    def __init__(self, device=0):
         """
         Initialize the chessVision class.
         """
+        self.device = device
         self.pieceDetector = pieceDetector()
         self.BOARD_COORD = None
 
-    # Caliberate the board to get board coordinates
+    # Calibrate the board to get board coordinates
     # Input -> Image Frame
     # Output -> Img,board_coordinates,board_object
     def calibration(self, frame):
@@ -69,8 +71,8 @@ class chessVision:
         """
         frameWidth = 640
         frameHeight = 640
-        link = "http://192.168.0.110:4747/video"
-        cap = cv2.VideoCapture(link)
+        # link = "http://192.168.0.110:4747/video"
+        cap = cv2.VideoCapture(self.device)
         cap.set(3, frameWidth)
         cap.set(4, frameHeight)
         cap.set(10, 150)
@@ -80,8 +82,8 @@ class chessVision:
 
         window_msg = "Press 'Enter' to caliberate board"
         while cap.isOpened():
-            sucess, src_img = cap.read()
-            if sucess:
+            success, src_img = cap.read()
+            if success:
                 img = cv2.resize(src_img, (640, 640))
                 if self.BOARD_COORD is None:
                     # Show camera feed
@@ -127,6 +129,17 @@ class chessVision:
 
 
 if __name__ == "__main__":
-    test = chessVision()
-    test.streamCapture()
+    parser = argparse.ArgumentParser(description="Get FEN encoding of OTB chess game")
+    parser.add_argument("--device", metavar="device", type=int, help="Webcam id")
+    parser.add_argument("--link", metavar="link", type=str, help="Stream url")
+
+    args = parser.parse_args()
+    device = args.device if args.device is not None else args.link
+    device = device if device is not None else 0
+
+    test = chessVision(device=device)
+    try:
+        test.streamCapture()
+    except Exception as e:
+        print(e)
     # test.test()
